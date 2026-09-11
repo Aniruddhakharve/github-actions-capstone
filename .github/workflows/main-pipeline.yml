@@ -1,0 +1,47 @@
+name: Main Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+    build-test:
+        uses: ./.github/workflows/reusable-build-test.yml
+        with:
+            python-version: "3.12"
+            run-tests: true
+
+    docker-latest:
+        needs: build-test
+        uses: ./.github/workflows/reusable-docker.yml
+        with:
+            image_name: github-actions-capstone
+            tag: "latest"
+        secrets:
+            docker_username: ${{secrets.DOCKER_USERNAME}}
+            docker_token: ${{secrets.DOCKER_TOKEN}}
+
+    docker-sha:
+        needs: build-test
+        uses: ./.github/workflows/reusable-docker.yml
+        with:
+            image_name: github-actions-capstone
+            tag: sha-${{ github.sha }}
+        secrets:
+            docker_username: ${{secrets.DOCKER_USERNAME}}
+            docker_token: ${{secrets.DOCKER_TOKEN}}
+
+    deploy:
+        needs: [docker-latest, docker-sha]
+        runs-on: ubuntu-latest
+        environment: production
+
+        steps: 
+            - name: Deploy Application
+              run: |
+                echo "Deploying image: ${{ needs.docker-latest.outputs.image_url }} to production"
+                echo "Deployment completed successfully."
+            
+        
+
