@@ -1,5 +1,11 @@
 # GitHub Actions Capstone
 
+[![PR Pipeline](https://github.com/Aniruddhakharve/github-actions-capstone/actions/workflows/pr-pipeline.yml/badge.svg)](https://github.com/Aniruddhakharve/github-actions-capstone/actions/workflows/pr-pipeline.yml)
+
+[![Main Pipeline](https://github.com/Aniruddhakharve/github-actions-capstone/actions/workflows/main-pipeline.yml/badge.svg)](https://github.com/Aniruddhakharve/github-actions-capstone/actions/workflows/main-pipeline.yml)
+
+[![Scheduled Health Check](https://github.com/Aniruddhakharve/github-actions-capstone/actions/workflows/health-check.yml/badge.svg)](https://github.com/Aniruddhakharve/github-actions-capstone/actions/workflows/health-check.yml)
+
 End-to-end CI/CD pipeline built with GitHub Actions.
 
 ## Application
@@ -20,14 +26,45 @@ This project uses a simple Python Flask application with:
 
 ## CI/CD Pipeline
 
-The final pipeline will:
+The pipeline performs:
 
-1. Run automated tests on pull requests
-2. Build and test the application
-3. Build and push a Docker image after merging to `main`
-4. Deploy the image to the production environment
-5. Perform scheduled Docker health checks
+1. Automated tests on pull requests
+2. Build and test on the main branch
+3. Docker image build and push to Docker Hub
+4. Production deployment using GitHub Environments
+5. Scheduled Docker health checks every 12 hours
 
-## Project Status
+## Pipeline Flow
 
-🚧 CI/CD pipeline is being built as part of the 90 Days of DevOps challenge#.
+```text
+Pull Request
+     ↓
+Build + Test
+     ↓
+PR Checks
+     ↓
+Merge to main
+     ↓
+Build + Test
+     ↓
+Docker Build + Push
+     ├── latest
+     └── sha-<short-commit>
+     ↓
+Production Deployment
+     ↓
+Environment Approval
+     ↓
+Deploy
+
+Every 12 Hours
+     ↓
+Health Check
+     ↓
+Pull Docker Image
+     ↓
+Run Container
+     ↓
+/health
+     ↓
+HTTP 200
