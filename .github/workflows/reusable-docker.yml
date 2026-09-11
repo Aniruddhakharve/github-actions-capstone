@@ -13,6 +13,11 @@ on:
           required: true
           type: string
 
+        docker_username:
+          description: "Docker Hub username"
+          required: true
+          type: string
+
     secrets:
         docker_username:
             description: "Docker Hub username"
@@ -46,7 +51,7 @@ jobs:
 
             - name: Build and push Docker image
               run: |
-                IMAGE="${{secrets.docker_username}}/${{inputs.image_name}}:${{inputs.tag}}"
+                IMAGE="${{ inputs.docker_username }}/${{ inputs.image_name }}:${{ inputs.tag }}"
                 echo "Building Docker image: $IMAGE"
                 docker build -t "$IMAGE" .
                 docker push "$IMAGE"
@@ -54,7 +59,7 @@ jobs:
             - name: Set image output
               id: image
               run: |
-                IMAGE="${{secrets.docker_username}}/${{inputs.image_name}}:${{inputs.tag}}"
+                IMAGE="${{ inputs.docker_username }}/${{ inputs.image_name }}:${{ inputs.tag }}"
                 echo "image_url=$IMAGE" >> "$GITHUB_OUTPUT"
                 echo "Image pushed Successfully: $IMAGE"
              

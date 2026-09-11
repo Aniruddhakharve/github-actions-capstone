@@ -18,6 +18,7 @@ jobs:
         with:
             image_name: github-actions-capstone
             tag: "latest"
+            docker_username: aniruddhakharve
         secrets:
             docker_username: ${{secrets.DOCKER_USERNAME}}
             docker_token: ${{secrets.DOCKER_TOKEN}}
@@ -28,6 +29,7 @@ jobs:
         with:
             image_name: github-actions-capstone
             tag: sha-${{ github.sha }}
+            docker_username: aniruddhakharve
         secrets:
             docker_username: ${{secrets.DOCKER_USERNAME}}
             docker_token: ${{secrets.DOCKER_TOKEN}}
