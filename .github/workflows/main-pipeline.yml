@@ -12,8 +12,23 @@ jobs:
       python-version: "3.12"
       run-tests: true
 
-  docker-latest:
+  prepare-version:
     needs: build-test
+    runs-on: ubuntu-latest
+
+    outputs:
+      short_sha: ${{ steps.version.outputs.short_sha }}
+
+    steps:
+      - name: Generate short SHA
+        id: version
+        run: |
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          echo "Short SHA: $SHORT_SHA"
+          echo "short_sha=$SHORT_SHA" >> "$GITHUB_OUTPUT"
+
+  docker-latest:
+    needs: [build-test, prepare-version]
     uses: ./.github/workflows/reusable-docker.yml
     with:
       image_name: github-actions-capstone
@@ -23,19 +38,17 @@ jobs:
       docker_token: ${{ secrets.DOCKER_TOKEN }}
 
   docker-sha:
-    needs: build-test
+    needs: [build-test, prepare-version]
     uses: ./.github/workflows/reusable-docker.yml
     with:
       image_name: github-actions-capstone
-      tag: sha-${{ github.sha }}
+      tag: sha-${{ needs.prepare-version.outputs.short_sha }}
       docker_username: aniruddhakharve
     secrets:
       docker_token: ${{ secrets.DOCKER_TOKEN }}
 
   deploy:
-    needs:
-      - docker-latest
-      - docker-sha
+    needs: [docker-latest, docker-sha]
     runs-on: ubuntu-latest
     environment: production
 
