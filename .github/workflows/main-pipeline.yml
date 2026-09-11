@@ -57,3 +57,5 @@ jobs:
         run: |
           echo "Deploying image: ${{ needs.docker-latest.outputs.image_url }} to production"
           echo "Deployment completed successfully."
+
+#try one
